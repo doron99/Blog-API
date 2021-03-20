@@ -1,0 +1,28 @@
+﻿//
+post: http://localhost:18039/api/auth/register
+body:
+{
+    fname:"asdf",
+    lname:"dfghfd",
+    email:"rtrtrtrt",
+    password:"1234",
+    confirmpassword:"1234"
+}
+//
+post: http://localhost:18039/api/auth/login
+body:
+{
+    "email":""
+    "password":"password"
+}
+//
+get: http://localhost:18039/api/posts
+// create
+post: http://localhost:18039/api/posts 
+body:
+{
+    "Title":"test",
+    "Content":"Content",
+    "Excerpt":"Excerpt",
+    "AuthorId":1    
+}
