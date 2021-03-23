@@ -13,15 +13,34 @@ namespace Blog_API.Data
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }
-        public void Configure(EntityTypeBuilder<Post> builder)
+        //public void Configure(EntityTypeBuilder<Post> builder)
+        //{
+        //    builder.ToTable("Posts");
+        //    builder.HasOne(m => m.Author)
+        //      .WithOne()
+        //      .HasForeignKey<User>(a => a.UID);
+        //}
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            builder.ToTable("Posts");
-            builder.HasOne(m => m.Author)
-              .WithOne()
-              .HasForeignKey<User>(a => a.UID);
+            modelBuilder.Entity<User>()
+                .HasMany<Post>(s => s.Posts)
+                .WithOne(x => x.Author);
+
+            modelBuilder.Entity<Post>()
+                .HasMany<Comment>(c => c.Comments)
+                .WithOne(p => p.Post)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne<User>(u => u.Author)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Post> Posts { get; set; }
-      
+        public DbSet<Comment> Comments { get; set; }
+
     }
 }

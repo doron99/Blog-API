@@ -26,3 +26,18 @@ body:
     "Excerpt":"Excerpt",
     "AuthorId":1    
 }
+//patch:
+body:
+  //    [
+            //    {
+            //        "value": "Friday the 13th",
+            //        "path": "/Title",
+            //        "op": "replace"
+            //    },
+            //    {
+            //        "value": "2020-04-01",
+            //        "path": "/releaseDate",
+            //        "op": "replace"
+            //    }    
+            //    ]
+        }

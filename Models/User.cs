@@ -11,15 +11,23 @@ namespace Blog_API.Models
     {
         [Key]
         public int UID { get; set; }
+        [Required]
+        [MaxLength(30)]
         public string Uemail { get; set; }
+        [Required]
+        [MaxLength(30)]
         public string Ufname { get; set; }
+        [Required]
+        [MaxLength(30)]
         public string Ulname { get; set; }
         [JsonIgnore]
         public byte[] PasswordHash { get; set; }
         [JsonIgnore]
         public byte[] PasswordSalt { get; set; }
         public DateTime Created { get; set; }
+        [MaxLength(50)]
         public string Uimg { get; set; }
-
+        [JsonIgnore]
+        public ICollection<Post> Posts { get; set; }
     }  
 }        

@@ -74,6 +74,17 @@ namespace Blog_API.Mappers
                 Public = true
             };
         }
+        public static Comment CommentCreateDTOToComment(CommentCreateDTO cc)
+        {
+            return new Comment
+            {
+                Created = DateTime.Now,
+                Content = cc.Content,
+                PostId = cc.PostId,
+                Public = true
+            };
+        }
+
         public static void setPostUpdateFields(this Post post,PostUpdateDTO postDTO)
         {
             post.Updated = DateTime.Now;
@@ -84,5 +95,6 @@ namespace Blog_API.Mappers
             post.Title = postDTO.Title;
             post.Public = postDTO.Public;
         }
+
     }
 }

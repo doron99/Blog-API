@@ -2,15 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Blog_API.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Blog_API.Controllers
 {
-    public class UsersController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UsersController : ControllerBase
     {
-        public IActionResult Index()
+        private readonly IUserRepository _userRepo;
+
+        public UsersController(IUserRepository userRepo)
         {
-            return View();
+            _userRepo = userRepo;
+        }
+        [HttpGet]
+        public async Task<IActionResult> Users()
+        {
+            var list = await _userRepo.GetAll().AsQueryable().ToListAsync();
+            return Ok(list);
         }
     }
 }

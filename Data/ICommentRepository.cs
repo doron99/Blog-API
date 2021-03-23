@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace Blog_API.Data
 {
-    public interface IPostRepository : IRepository<Post>
+    public interface ICommentRepository : IRepository<Comment>
     {
-        Task<List<Post>> getPosts();
-        
     }
 }

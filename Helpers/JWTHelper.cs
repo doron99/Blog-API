@@ -23,22 +23,23 @@ namespace Blog_API.Helpers
             var myIssuer = _config.GetSection("AppSettings:Issuer").Value;
             var myAudience = _config.GetSection("AppSettings:Audience").Value;
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier,user.UID.ToString()),
-                    new Claim(ClaimTypes.Email,user.Uemail.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddHours(1),
-                Issuer = myIssuer,
-                Audience = myAudience,
-                SigningCredentials = new SigningCredentials(mySecurityKey, SecurityAlgorithms.HmacSha256Signature)
-            };
+            var claims = new[] {
+                            new Claim("UserId", user.UID.ToString()),
+                            new Claim(ClaimTypes.Name, user.Ufname + " " + user.Ulname),
+                            new Claim(ClaimTypes.Role, "User"),
+                            new Claim(ClaimTypes.Email, user.Uemail.ToString())};
+            
+            var creds = new SigningCredentials(mySecurityKey, SecurityAlgorithms.HmacSha256);
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            var token = new JwtSecurityToken(
+                                        issuer: myIssuer,
+                                        audience:myAudience,
+                                        claims: claims,
+                                        expires: DateTime.Now.AddDays(1),
+                                        signingCredentials: creds);
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            return jwt;
+
         }
     }
 }

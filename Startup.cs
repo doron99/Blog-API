@@ -54,29 +54,63 @@ namespace Blog_API
                     new BadRequestObjectResult(actionContext.ModelState);
             });
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-          .AddCookie(cfg => cfg.SlidingExpiration = true)
-          .AddJwtBearer(options =>
-          {
-              options.TokenValidationParameters = new TokenValidationParameters
-              {
-                   // The signing key must match!
-                   ValidateIssuerSigningKey = true,
-                  IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:token").Value)),
-                   // Validate the JWT Issuer (iss) claim
-                   ValidateIssuer = true,
-                  ValidIssuer = Configuration.GetSection("AppSettings:Issuer").Value,
-                   // Validate the JWT Audience (aud) claim
-                   ValidateAudience = false,
-                  ValidAudience = Configuration.GetSection("AppSettings:Audience").Value,
-              };
-          });
+            var secretKey = Configuration.GetSection("AppSettings:token").Value;
+            var issuer = Configuration.GetSection("AppSettings:Issuer").Value;
+            var audience = Configuration.GetSection("AppSettings:Audience").Value;
+
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = signingKey,
+                ValidateIssuer = true,
+                ValidIssuer = issuer,
+                ValidateAudience = true,
+                ValidAudience = audience,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero,
+            };
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = tokenValidationParameters;
+            });
+
+
+
+          //  services.AddAuthentication(x =>
+          //  {
+          //      x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+          //      x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+          //  })
+          //.AddJwtBearer(options =>
+          //{
+          //    options.TokenValidationParameters = new TokenValidationParameters
+          //    {
+          //         // The signing key must match!
+          //         ValidateIssuerSigningKey = true,
+          //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:token").Value)),
+          //         // Validate the JWT Issuer (iss) claim
+          //         ValidateIssuer = false,
+          //        ValidIssuer = Configuration.GetSection("AppSettings:Issuer").Value,
+          //         // Validate the JWT Audience (aud) claim
+          //         ValidateAudience = false,
+          //        ValidAudience = Configuration.GetSection("AppSettings:Audience").Value,
+          //    };
+          //});
 
             services.AddScoped<IRepository<User>, UserRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRepository<Post>, PostRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
-
+            services.AddScoped<IRepository<Comment>, CommentRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -86,7 +120,12 @@ namespace Blog_API
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
