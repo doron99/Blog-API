@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Blog_API.Helpers
@@ -34,6 +35,20 @@ namespace Blog_API.Helpers
                 System.Globalization.NumberStyles.Any,
                 System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
             return isNum;
+        }
+        public static String getSaltString()
+        {
+            String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            StringBuilder salt = new StringBuilder();
+            Random rnd = new Random();
+            while (salt.Length < 10)
+            { // length of the random string.
+                int index = (int)(rnd.NextDouble() * SALTCHARS.Length);
+                salt.Append(SALTCHARS.ElementAt(index));
+            }
+            String saltStr = salt.ToString();
+            return saltStr;
+
         }
     }
 }

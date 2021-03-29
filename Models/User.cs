@@ -28,6 +28,9 @@ namespace Blog_API.Models
         [MaxLength(50)]
         public string Uimg { get; set; }
         [JsonIgnore]
-        public ICollection<Post> Posts { get; set; }
+        public virtual ICollection<Post> Posts { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<Comment> Comments {get; set;}
+
     }  
 }        

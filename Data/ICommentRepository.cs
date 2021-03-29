@@ -9,5 +9,6 @@ namespace Blog_API.Data
 {
     public interface ICommentRepository : IRepository<Comment>
     {
+        
     }
 }

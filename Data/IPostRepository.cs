@@ -10,6 +10,6 @@ namespace Blog_API.Data
     public interface IPostRepository : IRepository<Post>
     {
         Task<List<Post>> getPosts();
-        
+        Task<bool> IsPostExists(int id);
     }
 }

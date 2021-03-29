@@ -111,6 +111,8 @@ namespace Blog_API
             services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<IRepository<Comment>, CommentRepository>();
             services.AddScoped<ICommentRepository, CommentRepository>();
+            services.AddScoped<IFileRepository,FileRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -124,8 +126,9 @@ namespace Blog_API
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
-
             app.UseAuthentication();
+            app.UseStaticFiles();
+
             app.UseMvc();
         }
     }

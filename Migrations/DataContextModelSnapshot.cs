@@ -27,6 +27,8 @@ namespace Blog_API.Migrations
 
                     b.Property<int>("AuthorId");
 
+                    b.Property<int?>("CommentParentId");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(300);
@@ -43,8 +45,7 @@ namespace Blog_API.Migrations
 
                     b.HasKey("CommentId");
 
-                    b.HasIndex("AuthorId")
-                        .IsUnique();
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("PostId");
 
@@ -126,8 +127,8 @@ namespace Blog_API.Migrations
             modelBuilder.Entity("Blog_API.Models.Comment", b =>
                 {
                     b.HasOne("Blog_API.Models.User", "Author")
-                        .WithOne()
-                        .HasForeignKey("Blog_API.Models.Comment", "AuthorId")
+                        .WithMany("Comments")
+                        .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Blog_API.Models.Post", "Post")

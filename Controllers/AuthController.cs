@@ -43,10 +43,10 @@ namespace Blog_API.Controllers
             if (user == null)
                 return BadRequest("Email or Password incorrect");
 
+            DateTime expiration = DateTime.Now.AddDays(1);
+            var token = JWTHelper.createLoginToken(user, expiration);
 
-            var token = JWTHelper.createLoginToken(user);
-
-            return Ok(new { token = token,Uemail = user.Uemail });
+            return Ok(new { token = token,expiration = expiration, Uemail = user.Uemail });
            
         }
 

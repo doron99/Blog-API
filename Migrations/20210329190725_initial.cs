@@ -66,6 +66,7 @@ namespace Blog_API.Migrations
                     Like = table.Column<int>(nullable: false),
                     Dislike = table.Column<int>(nullable: false),
                     Public = table.Column<bool>(nullable: false),
+                    CommentParentId = table.Column<int>(nullable: true),
                     PostId = table.Column<int>(nullable: false),
                     AuthorId = table.Column<int>(nullable: false)
                 },
@@ -89,8 +90,7 @@ namespace Blog_API.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_AuthorId",
                 table: "Comments",
-                column: "AuthorId",
-                unique: true);
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_PostId",

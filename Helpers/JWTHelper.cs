@@ -14,7 +14,7 @@ namespace Blog_API.Helpers
     public static class JWTHelper
     {
         
-        public static string createLoginToken(User user)
+        public static string createLoginToken(User user,DateTime expiration )
         {
             var _config = Startup.StaticConfig;
             var mySecret = _config.GetSection("AppSettings:Token").Value;
@@ -35,7 +35,7 @@ namespace Blog_API.Helpers
                                         issuer: myIssuer,
                                         audience:myAudience,
                                         claims: claims,
-                                        expires: DateTime.Now.AddDays(1),
+                                        expires:expiration,
                                         signingCredentials: creds);
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
             return jwt;

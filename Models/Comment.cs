@@ -19,12 +19,14 @@ namespace Blog_API.Models
         public int Like { get; set; } = 0;
         public int Dislike { get; set; } = 0;
         public bool Public { get; set; } = false;
+        public int? CommentParentId { get; set; } = -1;
 
         public int PostId { get; set; }
-        public Post Post { get; set; }
+        [JsonIgnore]
+        public virtual Post Post { get; set; }
 
         public int AuthorId { get; set; }
-        public User Author { get; set; }
+        public virtual User Author { get; set; }
         
 
     }

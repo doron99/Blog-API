@@ -10,8 +10,8 @@ namespace Blog_API.Dtos
         public string Title { get; set; }
         public string Content { get; set; }
         public string Excerpt { get; set; }
-        public string CoverImagePath { get; set; }
-        public bool Public { get; set; }
+        public string CoverImagePath { get; set; } = "";
+        public bool Public { get; set; } = true;
         public bool Deleted { get; set; } = false;
         public int AuthorId { get; set; } = -1;
     }

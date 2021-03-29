@@ -44,7 +44,11 @@ namespace Blog_API.Data
 
         public void Update(Post item)
         {
-            throw new NotImplementedException();
+            _db.Entry(item).State = EntityState.Modified;
+        }
+        public async Task<bool> IsPostExists(int id)
+        {
+            return await _db.Posts.AnyAsync(x => x.PostId == id)? true : false;
         }
     }
 }

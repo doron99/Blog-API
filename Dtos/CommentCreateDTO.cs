@@ -9,5 +9,6 @@ namespace Blog_API.Dtos
     {
         public string Content { get; set; }
         public int PostId { get; set; }
+        public int? CommentParentId { get; set; }
     }
 }

@@ -70,7 +70,7 @@ namespace Blog_API.Data
 
         public void Update(User item)
         {
-            throw new NotImplementedException();
+            _db.Entry(item).State = EntityState.Modified;
         }
 
         public async Task<bool> UserExists(string email)

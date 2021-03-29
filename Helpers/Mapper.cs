@@ -81,14 +81,14 @@ namespace Blog_API.Mappers
                 Created = DateTime.Now,
                 Content = cc.Content,
                 PostId = cc.PostId,
-                Public = true
+                Public = true,
+                CommentParentId = cc.CommentParentId
             };
         }
 
         public static void setPostUpdateFields(this Post post,PostUpdateDTO postDTO)
         {
             post.Updated = DateTime.Now;
-            post.AuthorId = postDTO.AuthorId;
             post.Content = postDTO.Content;
             post.Deleted = postDTO.Deleted;
             post.Excerpt = postDTO.Excerpt;

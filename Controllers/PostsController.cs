@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Blog_API.Data;
 using Blog_API.Dtos;
+using Blog_API.Helpers;
 using Blog_API.Mappers;
 using Blog_API.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,32 +23,65 @@ namespace Blog_API.Controllers
     {
         private readonly IPostRepository _postRepo;
         private readonly ICommentRepository _commentRepo;
+        private readonly IFileRepository _fileRepo;
 
-        public PostsController(IPostRepository postRepo, ICommentRepository commentRepo)
+        public PostsController(
+            IPostRepository postRepo, 
+            ICommentRepository commentRepo,
+            IFileRepository fileRepo)
         {
+            _fileRepo = fileRepo;
             _postRepo = postRepo;
             _commentRepo = commentRepo;
         }
         [HttpGet]
+        [Route("img")]
+        public async Task<IActionResult> img(string path)
+        {
+            Byte[] b;
+            try
+            {
+                b = await System.IO.File.ReadAllBytesAsync(path);
+            }catch(Exception ex)
+            {
+                b = null;
+            }
+            
+            return File(b, "image/jpeg");
+
+            
+        }
+        [HttpGet]
         public async Task<IActionResult> Posts()
         {
-            var list = await _postRepo.GetAll().AsQueryable().Include(x => x.Author).Include(c => c.Comments).AsNoTracking().ToListAsync();
+            var list = await _postRepo.GetAll().AsQueryable()
+                .Include(c => c.Comments).Include(x => x.Author)
+                .ToListAsync();
             return Ok(list);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> Posts(int id)
         {
-            var list = await _postRepo.GetAll().AsQueryable().Where(x => x.PostId == id).Include(x => x.Author).Include(c => c.Comments).FirstOrDefaultAsync();
+            var list = await _postRepo.GetAll().AsQueryable().Where(x => x.PostId == id).Include(x => x.Author).Include(s => s.Comments).FirstOrDefaultAsync();
+
             return Ok(list);
         }
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Posts(PostCreateDTO postCreateDTO)
         {
+
+            int userid = Convert.ToInt32(User.Claims.Where(x => x.Type == "UserId").FirstOrDefault()?.Value);
+
+
+
+
             var post = Mapper.PostCreateDTOToPost(postCreateDTO);
+            post.AuthorId = Convert.ToInt32(userid);
             _postRepo.Add(post);
             if (await _postRepo.SaveAll())
-                return Created("/","");
+                //return Created("/","");
+                return Ok(post);
             else
                 return BadRequest();
         }
@@ -96,26 +132,110 @@ namespace Blog_API.Controllers
             postFromDB.setPostUpdateFields(postUpdateDTO);
 
             _postRepo.Update(postFromDB);
-            if (await _postRepo.SaveAll())
-                return NoContent();
-            else
-                return BadRequest();
+            try
+            {
+                if (await _postRepo.SaveAll())
+                    return NoContent();
+                else
+                    return BadRequest();
+            }
+            catch(Exception ex)
+            {
+                var x = ex.Message;
+            }
+            return BadRequest();
 
         }
 
-        [HttpPost("/api/Comments")]
+        [HttpPost("/api/posts/{id}/comments")]
         [Authorize]
-        public async Task<IActionResult> Comments(CommentCreateDTO commentCreateDTO)
+        public async Task<IActionResult> Comments(int id,CommentCreateDTO commentCreateDTO)
         {
+            if (id != commentCreateDTO.PostId)
+                return BadRequest();
             int userid = Convert.ToInt32(User.Claims.Where(x => x.Type == "UserId").FirstOrDefault()?.Value);
 
             var comment = Mapper.CommentCreateDTOToComment(commentCreateDTO);
             comment.AuthorId = userid;
             _commentRepo.Add(comment);
-            if (await _commentRepo.SaveAll())
-                return Created("/", "");
-            else
+            try
+            {
+                if (await _commentRepo.SaveAll())
+                {
+                    var comments = await _commentRepo.GetAll()
+                        .Where(c => c.PostId == id)
+                        .Include(x => x.Author).ToListAsync();
+                    return Ok(comments);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch(Exception ex)
+            {
+                var x = 1;
                 return BadRequest();
+            }  
+        }
+        [HttpGet("/api/posts/{id}/comments")]
+       
+        public async Task<IActionResult> Comments(int id)
+        {
+            if(await _postRepo.IsPostExists(id))
+            {
+                var comments = await _commentRepo.GetAll()
+                    .Where(c => c.PostId == id)
+                    .Include(x => x.Author).ToListAsync();
+            return Ok(comments);
+            }
+
+            return BadRequest();
+                
+
+
+
+        }
+        [HttpPost("/api/posts/{id}/upload")]
+        [Authorize]
+        public async Task<IActionResult> upload(int id, IFormFile image)
+        {
+            var post = await _postRepo.GetAll().Where(x => x.PostId == id).FirstOrDefaultAsync();
+            if (post == null)
+                return NotFound();
+
+            if (!string.IsNullOrEmpty(post.CoverImagePath))
+            {
+                string[] fn = post.CoverImagePath.Split(".");
+                string filename = fn[0].Replace("_sm", "");
+                string extension = fn[1];
+
+                _fileRepo.deleteFileByName("posts", post.CoverImagePath);
+
+            }
+
+            if (image != null)
+            {
+                string ImageName = Helper.getSaltString() + Path.GetExtension(image.FileName);
+                string prefix = Helper.getSaltString();
+                string suffix = Path.GetExtension(image.FileName);
+                string[] fn = ImageName.Split(".");
+
+                var img = _fileRepo.uploadImg(image, "posts", prefix + "" + suffix, true, 800, false);
+
+                if (!string.IsNullOrEmpty(img))
+                {
+                    post.CoverImagePath = img;
+                    _postRepo.Update(post);
+                    if (await _postRepo.SaveAll())
+                    {
+                        return Ok(img);
+                    }
+                }
+
+            }
+            return BadRequest();
+
         }
 
     }
