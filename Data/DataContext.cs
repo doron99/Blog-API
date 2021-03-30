@@ -30,29 +30,7 @@ namespace Blog_API.Data
                 .WithMany(c => c.Comments)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //modelBuilder.Entity<User>()
-            //                .HasMany<Post>(s => s.Posts)
-            //                .WithOne(x => x.Author);
-
-            //modelBuilder.Entity<User>()
-            //    .HasMany<Comment>(s => s.Comments)
-            //    .WithOne(x => x.Author);
-
-            //modelBuilder.Entity<Post>()
-            //                .HasMany<Comment>(c => c.Comments)
-            //                .WithOne(p => p.Post)
-            //                .OnDelete(DeleteBehavior.Restrict);
-
-            //modelBuilder.Entity<Comment>()
-            //                .HasOne<User>(u => u.Author)
-            //                .WithMany(c => c.Comments)
-            //                .OnDelete(DeleteBehavior.Restrict);
-
-            //modelBuilder.Entity<Comment>()
-            //                .HasOne<Post>(u => u.Post)
-            //                .WithMany(c => c.Comments)
-            //                .OnDelete(DeleteBehavior.Restrict);
-
+  
         }
 
         public DbSet<User> Users { get; set; }
@@ -61,26 +39,3 @@ namespace Blog_API.Data
 
     }
 }
-
-//modelBuilder.Entity<User>()
-//                .HasMany<Post>(s => s.Posts)
-//                .WithOne(x => x.Author);
-
-////modelBuilder.Entity<User>()
-////    .HasMany<Comment>(s => s.Comments)
-////    .WithOne(x => x.Author);
-
-//modelBuilder.Entity<Post>()
-//                .HasMany<Comment>(c => c.Comments)
-//                .WithOne(p => p.Post)
-//                .OnDelete(DeleteBehavior.Restrict);
-
-//modelBuilder.Entity<Comment>()
-//                .HasOne<User>(u => u.Author)
-//                .WithMany(c => c.Comments)
-//                .OnDelete(DeleteBehavior.Restrict);
-
-//modelBuilder.Entity<Comment>()
-//                .HasOne<Post>(u => u.Post)
-//                .WithMany(c => c.Comments)
-//                .OnDelete(DeleteBehavior.Restrict);
