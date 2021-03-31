@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\spa\**" />
+    <Content Remove="wwwroot\spa\**" />
+    <EmbeddedResource Remove="wwwroot\spa\**" />
+    <None Remove="wwwroot\spa\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CoreCompat.System.Drawing" Version="1.0.0-beta006" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
@@ -15,7 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ClientApp\" />
     <Folder Include="wwwroot\data\" />
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>

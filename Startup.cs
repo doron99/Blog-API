@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -113,9 +115,14 @@ namespace Blog_API
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<IFileRepository,FileRepository>();
 
+            //services.AddSpaStaticFiles(
+            //    configuration =>
+            //    {
+            //        configuration.RootPath = "ClientApp"; // Or any other folder
+            //    });
+
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -127,9 +134,23 @@ namespace Blog_API
                 .AllowAnyMethod()
                 .AllowAnyHeader());
             app.UseAuthentication();
-            app.UseStaticFiles();
 
-            app.UseMvc();
+            app.UseStaticFiles();
+            app.UseDefaultFiles();
+
+            //app.UseSpaStaticFiles();
+
+
+          
+
+            app.UseMvc(routes =>
+            {
+                // Default route for SPA components, excluding paths which appear to be static files (have an extension)
+                routes.MapSpaFallbackRoute(
+                    "spaFallback",
+                    new { controller = "Fallback", action = "Index" });
+            });
+           
         }
     }
 }
