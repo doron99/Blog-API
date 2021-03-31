@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Blog_API.Classes;
 using Blog_API.Data;
 using Blog_API.Dtos;
 using Blog_API.Helpers;
@@ -52,12 +53,24 @@ namespace Blog_API.Controllers
             
         }
         [HttpGet]
-        public async Task<IActionResult> Posts()
+        public async Task<IActionResult> Posts([FromQuery] PaginationFilter filter)
         {
-            var list = await _postRepo.GetAll().AsQueryable()
-                .Include(c => c.Comments).Include(x => x.Author)
+            var list = await _postRepo.GetAll().AsQueryable().Include(x => x.Author)
                 .ToListAsync();
-            return Ok(list);
+            var query =  _postRepo.GetAll().Include(x => x.Author);
+
+            var skip = (currPage - 1) * itemsPerPage;
+            var take = itemsPerPage;
+
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+
+            var rowCount = await query.CountAsync();
+            var results = await query.Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+               .Take(validFilter.PageSize).ToListAsync();
+
+            return Ok(new PagedResponse<List<Post>>(results, validFilter.PageNumber, validFilter.PageSize));
+
+            //return Ok(list);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> Posts(int id)

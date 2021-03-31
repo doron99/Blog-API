@@ -123,7 +123,7 @@ namespace Blog_API
                 app.UseDeveloperExceptionPage();
             }
             app.UseCors(x => x
-                .AllowAnyOrigin()
+                .WithOrigins("http://192.168.0.3:8080","http://blog.doron.org.il")
                 .AllowAnyMethod()
                 .AllowAnyHeader());
             app.UseAuthentication();
