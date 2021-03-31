@@ -7,17 +7,17 @@ namespace Blog_API.Classes
 {
     public class PaginationFilter
     {
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; }
+        public int CurrPage { get; set; }
+        public int ItemsPerPage { get; set; }
         public PaginationFilter()
         {
-            this.PageNumber = 1;
-            this.PageSize = 10;
+            this.CurrPage = 1;
+            this.ItemsPerPage = 4;
         }
         public PaginationFilter(int pageNumber, int pageSize)
         {
-            this.PageNumber = pageNumber < 1 ? 1 : pageNumber;
-            this.PageSize = pageSize > 10 ? 10 : pageSize;
+            this.CurrPage = pageNumber < 1 ? 1 : pageNumber;
+            this.ItemsPerPage = pageSize > 4 ? 4 : pageSize;
         }
     }
 }

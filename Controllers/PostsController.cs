@@ -59,23 +59,20 @@ namespace Blog_API.Controllers
                 .ToListAsync();
             var query =  _postRepo.GetAll().Include(x => x.Author);
 
-            var skip = (currPage - 1) * itemsPerPage;
-            var take = itemsPerPage;
-
-            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
-
+            var validFilter = new PaginationFilter(filter.CurrPage, filter.ItemsPerPage);
             var rowCount = await query.CountAsync();
-            var results = await query.Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
-               .Take(validFilter.PageSize).ToListAsync();
+            var results = await query.Skip((validFilter.CurrPage - 1) * validFilter.ItemsPerPage).Take(validFilter.ItemsPerPage).ToListAsync();
 
-            return Ok(new PagedResponse<List<Post>>(results, validFilter.PageNumber, validFilter.PageSize));
+            return Ok(PaginationHelper.CreatePagedReponse<Post>(results, validFilter, rowCount));
 
-            //return Ok(list);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> Posts(int id)
         {
-            var list = await _postRepo.GetAll().AsQueryable().Where(x => x.PostId == id).Include(x => x.Author).Include(s => s.Comments).FirstOrDefaultAsync();
+            var list = await _postRepo.GetAll().AsQueryable()
+                .Where(x => x.PostId == id)
+                .Include(x => x.Author)
+                .FirstOrDefaultAsync();
 
             return Ok(list);
         }
@@ -85,9 +82,6 @@ namespace Blog_API.Controllers
         {
 
             int userid = Convert.ToInt32(User.Claims.Where(x => x.Type == "UserId").FirstOrDefault()?.Value);
-
-
-
 
             var post = Mapper.PostCreateDTOToPost(postCreateDTO);
             post.AuthorId = Convert.ToInt32(userid);
@@ -171,25 +165,19 @@ namespace Blog_API.Controllers
             var comment = Mapper.CommentCreateDTOToComment(commentCreateDTO);
             comment.AuthorId = userid;
             _commentRepo.Add(comment);
-            try
+
+            if (await _commentRepo.SaveAll())
             {
-                if (await _commentRepo.SaveAll())
-                {
-                    var comments = await _commentRepo.GetAll()
-                        .Where(c => c.PostId == id)
-                        .Include(x => x.Author).ToListAsync();
-                    return Ok(comments);
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                var comments = await _commentRepo.GetAll()
+                    .Where(c => c.PostId == id)
+                    .Include(x => x.Author).ToListAsync();
+                return Ok(comments);
             }
-            catch(Exception ex)
+            else
             {
-                var x = 1;
                 return BadRequest();
-            }  
+            }
+            
         }
         [HttpGet("/api/posts/{id}/comments")]
        
@@ -219,20 +207,13 @@ namespace Blog_API.Controllers
 
             if (!string.IsNullOrEmpty(post.CoverImagePath))
             {
-                string[] fn = post.CoverImagePath.Split(".");
-                string filename = fn[0].Replace("_sm", "");
-                string extension = fn[1];
-
                 _fileRepo.deleteFileByName("posts", post.CoverImagePath);
-
             }
 
             if (image != null)
             {
-                string ImageName = Helper.getSaltString() + Path.GetExtension(image.FileName);
                 string prefix = Helper.getSaltString();
                 string suffix = Path.GetExtension(image.FileName);
-                string[] fn = ImageName.Split(".");
 
                 var img = _fileRepo.uploadImg(image, "posts", prefix + "" + suffix, true, 800, false);
 
