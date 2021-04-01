@@ -84,29 +84,6 @@ namespace Blog_API
                 options.TokenValidationParameters = tokenValidationParameters;
             });
 
-
-
-          //  services.AddAuthentication(x =>
-          //  {
-          //      x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-          //      x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-          //  })
-          //.AddJwtBearer(options =>
-          //{
-          //    options.TokenValidationParameters = new TokenValidationParameters
-          //    {
-          //         // The signing key must match!
-          //         ValidateIssuerSigningKey = true,
-          //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:token").Value)),
-          //         // Validate the JWT Issuer (iss) claim
-          //         ValidateIssuer = false,
-          //        ValidIssuer = Configuration.GetSection("AppSettings:Issuer").Value,
-          //         // Validate the JWT Audience (aud) claim
-          //         ValidateAudience = false,
-          //        ValidAudience = Configuration.GetSection("AppSettings:Audience").Value,
-          //    };
-          //});
-
             services.AddScoped<IRepository<User>, UserRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRepository<Post>, PostRepository>();
