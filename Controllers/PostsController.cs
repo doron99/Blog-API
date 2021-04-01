@@ -8,6 +8,8 @@ using Blog_API.Classes;
 using Blog_API.Data;
 using Blog_API.Dtos;
 using Blog_API.Helpers;
+using Blog_API.Helpers;
+
 using Blog_API.Mappers;
 using Blog_API.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -35,29 +37,15 @@ namespace Blog_API.Controllers
             _postRepo = postRepo;
             _commentRepo = commentRepo;
         }
-        [HttpGet]
-        [Route("img")]
-        public async Task<IActionResult> img(string path)
-        {
-            Byte[] b;
-            try
-            {
-                b = await System.IO.File.ReadAllBytesAsync(path);
-            }catch(Exception ex)
-            {
-                b = null;
-            }
-            
-            return File(b, "image/jpeg");
-
-            
-        }
+        
         [HttpGet]
         public async Task<IActionResult> Posts([FromQuery] PaginationFilter filter)
         {
-            var list = await _postRepo.GetAll().AsQueryable().Include(x => x.Author)
-                .ToListAsync();
-            var query =  _postRepo.GetAll().Include(x => x.Author);
+
+            var query = _postRepo.GetAll()
+                .WhereIf(!filter.mode.Equals("manager"), x => x.Public == true)
+                .IncludeIf(!filter.mode.Equals("manager"), x => x.Include(a => a.Author));
+            
 
             var validFilter = new PaginationFilter(filter.CurrPage, filter.ItemsPerPage);
             var rowCount = await query.CountAsync();
@@ -80,7 +68,7 @@ namespace Blog_API.Controllers
         [Authorize]
         public async Task<IActionResult> Posts(PostCreateDTO postCreateDTO)
         {
-
+            
             int userid = Convert.ToInt32(User.Claims.Where(x => x.Type == "UserId").FirstOrDefault()?.Value);
 
             var post = Mapper.PostCreateDTOToPost(postCreateDTO);
@@ -100,7 +88,11 @@ namespace Blog_API.Controllers
                 return BadRequest();
 
             var postFromDB = await _postRepo.GetAll().FirstOrDefaultAsync(x => x.PostId == id);
-
+            int userid = Convert.ToInt32(User.Claims.Where(x => x.Type == "UserId").FirstOrDefault()?.Value);
+            //check if is the same owner
+            if(postFromDB.AuthorId != userid)
+                return Unauthorized("your'e not authorized to update this post");
+            
             if (postFromDB == null)
                 return NotFound();
 
@@ -131,7 +123,10 @@ namespace Blog_API.Controllers
                 return BadRequest();
 
             var postFromDB = await _postRepo.GetAll().FirstOrDefaultAsync(x => x.PostId == id);
-
+            int userid = Convert.ToInt32(User.Claims.Where(x => x.Type == "UserId").FirstOrDefault()?.Value);
+            //check if is the same owner
+            if (postFromDB.AuthorId != userid)
+                return Unauthorized("your'e not authorized to update this post");
             if (postFromDB == null)
                 return NotFound();
 
@@ -201,13 +196,19 @@ namespace Blog_API.Controllers
         [Authorize]
         public async Task<IActionResult> upload(int id, IFormFile image)
         {
-            var post = await _postRepo.GetAll().Where(x => x.PostId == id).FirstOrDefaultAsync();
-            if (post == null)
+            var postFromDB = await _postRepo.GetAll().Where(x => x.PostId == id).FirstOrDefaultAsync();
+            if (postFromDB == null)
                 return NotFound();
 
-            if (!string.IsNullOrEmpty(post.CoverImagePath))
+            int userid = Convert.ToInt32(User.Claims.Where(x => x.Type == "UserId").FirstOrDefault()?.Value);
+
+            //check if is the same owner
+            if (postFromDB.AuthorId != userid)
+                return Unauthorized("your'e not authorized to upload in this post");
+
+            if (!string.IsNullOrEmpty(postFromDB.CoverImagePath))
             {
-                _fileRepo.deleteFileByName("posts", post.CoverImagePath);
+                _fileRepo.deleteFileByName("posts", postFromDB.CoverImagePath);
             }
 
             if (image != null)
@@ -219,8 +220,8 @@ namespace Blog_API.Controllers
 
                 if (!string.IsNullOrEmpty(img))
                 {
-                    post.CoverImagePath = img;
-                    _postRepo.Update(post);
+                    postFromDB.CoverImagePath = img;
+                    _postRepo.Update(postFromDB);
                     if (await _postRepo.SaveAll())
                     {
                         return Ok(img);

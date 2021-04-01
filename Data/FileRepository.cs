@@ -53,6 +53,7 @@ namespace Blog_API.Data
                     {
                         file.CopyTo(ms);
                         Image returnImage = Image.FromStream(ms);
+                        SetCorrectOrientation(returnImage);
                         string[] fn = filename.Split(".");
                         reduceIMGproccessingFromImage(returnImage, directory, filename, sizeInKB);
                         ret = filename;
@@ -66,6 +67,43 @@ namespace Blog_API.Data
 
             }
             return ret;
+        }
+        private static void SetCorrectOrientation(Image image)
+        {
+            //property id = 274 describe EXIF orientation parameter
+            if (Array.IndexOf(image.PropertyIdList, 274) > -1)
+            {
+                var orientation = (int)image.GetPropertyItem(274).Value[0];
+                switch (orientation)
+                {
+                    case 1:
+                        // No rotation required.
+                        break;
+                    case 2:
+                        image.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                        break;
+                    case 3:
+                        image.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                        break;
+                    case 4:
+                        image.RotateFlip(RotateFlipType.Rotate180FlipX);
+                        break;
+                    case 5:
+                        image.RotateFlip(RotateFlipType.Rotate90FlipX);
+                        break;
+                    case 6:
+                        image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                        break;
+                    case 7:
+                        image.RotateFlip(RotateFlipType.Rotate270FlipX);
+                        break;
+                    case 8:
+                        image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                        break;
+                }
+                // This EXIF data is now invalid and should be removed.
+                image.RemovePropertyItem(274);
+            }
         }
         public Image reduceIMGproccessingFromImage(Image img, string directory, string filename, int kb)
         {

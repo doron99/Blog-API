@@ -9,6 +9,8 @@ namespace Blog_API.Classes
     {
         public int CurrPage { get; set; }
         public int ItemsPerPage { get; set; }
+        public string mode { get; set; } = "";
+
         public PaginationFilter()
         {
             this.CurrPage = 1;

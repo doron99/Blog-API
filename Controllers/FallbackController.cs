@@ -10,7 +10,7 @@ namespace Blog_API.Controllers
     {
         public IActionResult Index()
         {
-            return PhysicalFile( Path.Combine(Directory.GetCurrentDirectory(),"ClientApp", "index.html"), "text/HTML");
+            return PhysicalFile( Path.Combine(Directory.GetCurrentDirectory(),"wwwroot/ClientApp", "index.html"), "text/HTML");
         }
     }
 }

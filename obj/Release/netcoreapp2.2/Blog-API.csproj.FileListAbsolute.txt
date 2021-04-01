@@ -1,0 +1,14 @@
+C:\projects\blogProject\Blog-API\Blog-API\bin\Release\netcoreapp2.2\Blog-API.deps.json
+C:\projects\blogProject\Blog-API\Blog-API\bin\Release\netcoreapp2.2\Blog-API.runtimeconfig.json
+C:\projects\blogProject\Blog-API\Blog-API\bin\Release\netcoreapp2.2\Blog-API.runtimeconfig.dev.json
+C:\projects\blogProject\Blog-API\Blog-API\bin\Release\netcoreapp2.2\Blog-API.dll
+C:\projects\blogProject\Blog-API\Blog-API\bin\Release\netcoreapp2.2\Blog-API.pdb
+C:\projects\blogProject\Blog-API\Blog-API\obj\Release\netcoreapp2.2\Blog-API.csprojAssemblyReference.cache
+C:\projects\blogProject\Blog-API\Blog-API\obj\Release\netcoreapp2.2\Blog-API.csproj.CoreCompileInputs.cache
+C:\projects\blogProject\Blog-API\Blog-API\obj\Release\netcoreapp2.2\Blog-API.RazorAssemblyInfo.cache
+C:\projects\blogProject\Blog-API\Blog-API\obj\Release\netcoreapp2.2\Blog-API.RazorAssemblyInfo.cs
+C:\projects\blogProject\Blog-API\Blog-API\obj\Release\netcoreapp2.2\Blog-API.AssemblyInfoInputs.cache
+C:\projects\blogProject\Blog-API\Blog-API\obj\Release\netcoreapp2.2\Blog-API.AssemblyInfo.cs
+C:\projects\blogProject\Blog-API\Blog-API\obj\Release\netcoreapp2.2\Blog-API.RazorTargetAssemblyInfo.cache
+C:\projects\blogProject\Blog-API\Blog-API\obj\Release\netcoreapp2.2\Blog-API.dll
+C:\projects\blogProject\Blog-API\Blog-API\obj\Release\netcoreapp2.2\Blog-API.pdb

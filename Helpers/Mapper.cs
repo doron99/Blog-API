@@ -93,7 +93,6 @@ namespace Blog_API.Mappers
             post.Deleted = postDTO.Deleted;
             post.Excerpt = postDTO.Excerpt;
             post.Title = postDTO.Title;
-            post.Public = postDTO.Public;
         }
 
     }

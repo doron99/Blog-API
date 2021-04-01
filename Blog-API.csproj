@@ -22,9 +22,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\" />
+    <Folder Include="wwwroot\ClientApp\" />
     <Folder Include="wwwroot\data\" />
     <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\ClientApp\css\app.aad3bcb1.css" />
+    <None Include="wwwroot\ClientApp\css\chunk-vendors.99939572.css" />
+    <None Include="wwwroot\ClientApp\favicon.ico" />
+    <None Include="wwwroot\ClientApp\index.html" />
+    <None Include="wwwroot\ClientApp\js\app.e0af6753.js" />
+    <None Include="wwwroot\ClientApp\js\app.e0af6753.js.map" />
+    <None Include="wwwroot\ClientApp\js\chunk-vendors.32692c01.js" />
+    <None Include="wwwroot\ClientApp\js\chunk-vendors.32692c01.js.map" />
   </ItemGroup>
 
 </Project>

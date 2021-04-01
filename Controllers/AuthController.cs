@@ -46,7 +46,7 @@ namespace Blog_API.Controllers
             DateTime expiration = DateTime.Now.AddDays(1);
             var token = JWTHelper.createLoginToken(user, expiration);
 
-            return Ok(new { token = token,expiration = expiration, Uemail = user.Uemail });
+            return Ok(new { token = token,expiration = expiration, uemail = user.Uemail,uid = user.UID });
            
         }
 

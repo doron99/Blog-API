@@ -115,11 +115,11 @@ namespace Blog_API
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<IFileRepository,FileRepository>();
 
-            //services.AddSpaStaticFiles(
-            //    configuration =>
-            //    {
-            //        configuration.RootPath = "ClientApp"; // Or any other folder
-            //    });
+            services.AddSpaStaticFiles(
+                configuration =>
+                {
+                    configuration.RootPath = "wwwroot/ClientApp"; // Or any other folder
+                });
 
         }
 
@@ -138,7 +138,7 @@ namespace Blog_API
             app.UseStaticFiles();
             app.UseDefaultFiles();
 
-            //app.UseSpaStaticFiles();
+            app.UseSpaStaticFiles();
 
 
           
