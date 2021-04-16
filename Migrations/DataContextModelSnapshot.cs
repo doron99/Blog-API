@@ -92,6 +92,24 @@ namespace Blog_API.Migrations
                     b.ToTable("Posts");
                 });
 
+            modelBuilder.Entity("Blog_API.Models.Role", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("RoleName")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("UID");
+
+                    b.HasKey("RoleId");
+
+                    b.HasIndex("UID");
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("Blog_API.Models.User", b =>
                 {
                     b.Property<int>("UID")
@@ -119,6 +137,10 @@ namespace Blog_API.Migrations
                         .IsRequired()
                         .HasMaxLength(30);
 
+                    b.Property<bool>("isComment");
+
+                    b.Property<bool>("isPost");
+
                     b.HasKey("UID");
 
                     b.ToTable("Users");
@@ -143,6 +165,14 @@ namespace Blog_API.Migrations
                         .WithMany("Posts")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Blog_API.Models.Role", b =>
+                {
+                    b.HasOne("Blog_API.Models.User", "User")
+                        .WithMany("Roles")
+                        .HasForeignKey("UID")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

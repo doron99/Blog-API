@@ -8,6 +8,7 @@ using Blog_API.Helpers;
 using Blog_API.Mappers;
 using Blog_API.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Blog_API.Controllers
 {
@@ -31,11 +32,20 @@ namespace Blog_API.Controllers
             if (await _repo.UserExists(userRegisterDTO.email.Trim()))
                 return BadRequest("Email is already Taken");
 
-            if (await _repo.Register(userRegisterDTO))
-                return Created("/", "");
+            var user = await _repo.Register(userRegisterDTO);
+            if(user != null)
+            {
+                await _repo.AddRole(user.UID, "User");
+                return Ok(user);
+            }
             else
+            {
                 return BadRequest("Problrem ocour");
+            }
+            
         }
+       
+
         [HttpPost("Login")]
         public async Task<IActionResult> Login(UserLoginDTO userLoginDTO)
         {

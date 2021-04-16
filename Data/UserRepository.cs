@@ -19,28 +19,34 @@ namespace Blog_API.Data
             _db = db;
         }
 
-        
-        //functions from irepository
-        public void Add(User item)
+        #region roles
+        public async Task<bool> AddRole(int id,string role)
         {
-            _db.Add(item);
+            _db.Roles.Add(new Role { UID = id, RoleName = role });
+            if (await _db.SaveChangesAsync() > 0)
+                return true;
+            else
+                return false;
         }
-
-       
-
-        public void Delete(User item)
+        public async Task<bool> DeleteRole(int id, string role)
         {
-            throw new NotImplementedException();
-        }
+            var roleFromDB = await _db.Roles.FirstOrDefaultAsync(x => x.UID == id && x.RoleName.Equals(role));
+            if (roleFromDB == null)
+                return false;
 
-        public IQueryable<User> GetAll()
-        {
-            return _db.Users.AsQueryable();
+            _db.Roles.Remove(roleFromDB);
+            if (await _db.SaveChangesAsync() > 0)
+                return true;
+            else
+                return false;
         }
+        #endregion
 
+
+        #region authentication
         public async Task<User> Login(UserLoginDTO userLoginDTO)
         {
-            var userFromRepo = await GetAll().Where(x => x.Uemail.Equals(userLoginDTO.email)).FirstOrDefaultAsync();
+            var userFromRepo = await GetAll().Where(x => x.Uemail.Equals(userLoginDTO.email)).Include(x => x.Roles).FirstOrDefaultAsync();
             if (userFromRepo == null)
                 return null;
 
@@ -50,7 +56,7 @@ namespace Blog_API.Data
             return userFromRepo;
         }
 
-        public async Task<bool> Register(UserRegisterDTO userRegisterDTO)
+        public async Task<User> Register(UserRegisterDTO userRegisterDTO)
         {
             var userToCreate = Mapper.UserRegisterDTOToUser(userRegisterDTO);
             Helper.CreatePasswordHash(userRegisterDTO.Password, out byte[] passwordHash, out byte[] passwordSalt);
@@ -58,11 +64,19 @@ namespace Blog_API.Data
             userToCreate.PasswordSalt = passwordSalt;
             Add(userToCreate);
             if (await SaveAll())
-                return true;
+                return userToCreate;
             else
-                return false;
+                return null;
         }
 
+        public async Task<bool> UserExists(string email)
+        {
+            return await GetAll().AnyAsync(x => x.Uemail.Equals(email)) ? true : false;
+        }
+        #endregion
+        
+
+        #region functions from irepository
         public async Task<bool> SaveAll()
         {
             return await _db.SaveChangesAsync() > 0 ? true : false;
@@ -72,10 +86,22 @@ namespace Blog_API.Data
         {
             _db.Entry(item).State = EntityState.Modified;
         }
-
-        public async Task<bool> UserExists(string email)
+        public void Add(User item)
         {
-            return await GetAll().AnyAsync(x => x.Uemail.Equals(email)) ? true : false;
+            _db.Add(item);
         }
+        public void Delete(User item)
+        {
+            _db.Remove(item);
+        }
+
+        public IQueryable<User> GetAll()
+        {
+            return _db.Users.AsQueryable();
+        }
+        #endregion
+
+
+
     }
 }

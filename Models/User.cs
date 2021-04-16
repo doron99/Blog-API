@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Blog_API.Dtos;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -27,10 +28,15 @@ namespace Blog_API.Models
         public DateTime Created { get; set; }
         [MaxLength(50)]
         public string Uimg { get; set; }
+        public bool isPost { get; set; }
+        public bool isComment { get; set; }
+
+        public virtual ICollection<Role> Roles { get; set; }
         [JsonIgnore]
         public virtual ICollection<Post> Posts { get; set; }
         [JsonIgnore]
         public virtual ICollection<Comment> Comments {get; set;}
 
+        
     }  
 }        

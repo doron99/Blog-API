@@ -14,6 +14,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20210413104705_addRolesTable.cs" />
+    <Compile Remove="Migrations\20210413104705_addRolesTable.Designer.cs" />
+    <Compile Remove="Migrations\20210413104800_addRolesTable.cs" />
+    <Compile Remove="Migrations\20210413104800_addRolesTable.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CoreCompat.System.Drawing" Version="1.0.0-beta006" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />

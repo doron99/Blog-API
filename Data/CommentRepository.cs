@@ -23,7 +23,7 @@ namespace Blog_API.Data
 
         public void Delete(Comment item)
         {
-            throw new NotImplementedException();
+            _db.Remove(item);
         }
 
         public IQueryable<Comment> GetAll()
@@ -38,7 +38,7 @@ namespace Blog_API.Data
 
         public void Update(Comment item)
         {
-            throw new NotImplementedException();
+            _db.Update(item);
         }
 
         //public async Task<List<Post>> getPosts()

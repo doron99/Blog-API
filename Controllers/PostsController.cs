@@ -45,7 +45,7 @@ namespace Blog_API.Controllers
             var query = _postRepo.GetAll()
                 .WhereIf(!filter.mode.Equals("manager"), x => x.Public == true)
                 .IncludeIf(!filter.mode.Equals("manager"), x => x.Include(a => a.Author));
-            
+
 
             var validFilter = new PaginationFilter(filter.CurrPage, filter.ItemsPerPage);
             var rowCount = await query.CountAsync();
@@ -149,49 +149,7 @@ namespace Blog_API.Controllers
 
         }
 
-        [HttpPost("/api/posts/{id}/comments")]
-        [Authorize]
-        public async Task<IActionResult> Comments(int id,CommentCreateDTO commentCreateDTO)
-        {
-            if (id != commentCreateDTO.PostId)
-                return BadRequest();
-            int userid = Convert.ToInt32(User.Claims.Where(x => x.Type == "UserId").FirstOrDefault()?.Value);
 
-            var comment = Mapper.CommentCreateDTOToComment(commentCreateDTO);
-            comment.AuthorId = userid;
-            _commentRepo.Add(comment);
-
-            if (await _commentRepo.SaveAll())
-            {
-                var comments = await _commentRepo.GetAll()
-                    .Where(c => c.PostId == id)
-                    .Include(x => x.Author).ToListAsync();
-                return Ok(comments);
-            }
-            else
-            {
-                return BadRequest();
-            }
-            
-        }
-        [HttpGet("/api/posts/{id}/comments")]
-       
-        public async Task<IActionResult> Comments(int id)
-        {
-            if(await _postRepo.IsPostExists(id))
-            {
-                var comments = await _commentRepo.GetAll()
-                    .Where(c => c.PostId == id)
-                    .Include(x => x.Author).ToListAsync();
-            return Ok(comments);
-            }
-
-            return BadRequest();
-                
-
-
-
-        }
         [HttpPost("/api/posts/{id}/upload")]
         [Authorize]
         public async Task<IActionResult> upload(int id, IFormFile image)

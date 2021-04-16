@@ -30,12 +30,18 @@ namespace Blog_API.Data
                 .WithMany(c => c.Comments)
                 .OnDelete(DeleteBehavior.Restrict);
 
-  
+            modelBuilder.Entity<User>()
+                .HasMany<Role>(r => r.Roles)
+                .WithOne(u => u.User)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Role> Roles { get; set; }
+
 
     }
 }

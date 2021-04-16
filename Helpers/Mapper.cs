@@ -95,5 +95,16 @@ namespace Blog_API.Mappers
             post.Title = postDTO.Title;
         }
 
+        public static void setUserUpdateFields(this User user, UserUpdateDTO userDTO)
+        {
+            user.Ufname = userDTO.Ufname;
+            user.Ulname = userDTO.Ulname;
+            user.Uemail = userDTO.Uemail;
+            user.isPost = userDTO.isPost;
+            user.isComment = userDTO.isComment;
+        }
+
+       
+
     }
 }

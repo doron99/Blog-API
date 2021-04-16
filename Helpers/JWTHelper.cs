@@ -23,12 +23,13 @@ namespace Blog_API.Helpers
             var myIssuer = _config.GetSection("AppSettings:Issuer").Value;
             var myAudience = _config.GetSection("AppSettings:Audience").Value;
 
-            var claims = new[] {
+            var claims = new List<Claim> {
                             new Claim("UserId", user.UID.ToString()),
                             new Claim(ClaimTypes.Name, user.Ufname + " " + user.Ulname),
-                            new Claim(ClaimTypes.Role, "User"),
                             new Claim(ClaimTypes.Email, user.Uemail.ToString())};
-            
+            foreach (var role in user.Roles)
+                claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+
             var creds = new SigningCredentials(mySecurityKey, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(

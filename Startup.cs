@@ -17,6 +17,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace Blog_API
@@ -43,8 +44,8 @@ namespace Blog_API
             services.AddMvc()
                 .AddJsonOptions(options =>
                 {
-                    options.SerializerSettings.ContractResolver =
-                        new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.ContractResolver =new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 });
             services.AddEntityFrameworkSqlServer()
                 .AddDbContext<DataContext>();
@@ -86,11 +87,16 @@ namespace Blog_API
 
             services.AddScoped<IRepository<User>, UserRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+
             services.AddScoped<IRepository<Post>, PostRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
+
             services.AddScoped<IRepository<Comment>, CommentRepository>();
             services.AddScoped<ICommentRepository, CommentRepository>();
+
+
             services.AddScoped<IFileRepository,FileRepository>();
+
 
             services.AddSpaStaticFiles(
                 configuration =>
@@ -107,7 +113,7 @@ namespace Blog_API
                 app.UseDeveloperExceptionPage();
             }
             app.UseCors(x => x
-                .WithOrigins("http://192.168.0.3:8080","http://blog.doron.org.il")
+                .WithOrigins("http://192.168.0.3:8080", "http://192.168.0.15:8080", "http://blog.doron.org.il")
                 .AllowAnyMethod()
                 .AllowAnyHeader());
             app.UseAuthentication();
